@@ -198,32 +198,32 @@ BuscadorDeCasos
     Click Element    //td[contains(@id,'tdCuatro')]
     ${NombreCopiar}    Read Cell Data By Name    ${NombreHoja}    B${Contador}
     clipboard.Copy    ${NombreCopiar}
-    Set Variable    ${NombreCopiar}    ${NombreCopiar}
+    ${NombreCopiar}    Set Suite Variable    ${NombreCopiar}
     Log    ${NombreCopiar}
     Click Element    //input[contains(@name,'NOM_Consulta')]
     Press Keys    none    CTRL+V
     ${ApellidoPaternoCopiar}    Read Cell Data By Name    ${NombreHoja}    D${Contador}
     clipboard.Copy    ${ApellidoPaternoCopiar}
-    Set Variable    ${ApellidoPaternoCopiar}    ${ApellidoPaternoCopiar}
+    ${ApellidoPaternoCopiar}    Set Suite Variable    ${ApellidoPaternoCopiar}
     Log    ${ApellidoPaternoCopiar}
     Click Element    //input[contains(@name,'APE_Paterno')]
     Press Keys    none    CTRL+V
     ${ApellidoMaternoCopiar}    Read Cell Data By Name    ${NombreHoja}    E${Contador}
     clipboard.Copy    ${ApellidoMaternoCopiar}
-    Set Variable    ${ApellidoMaternoCopiar}    ${ApellidoMaternoCopiar}
+    ${ApellidoMaternoCopiar}    Set Suite Variable    ${ApellidoMaternoCopiar}
     Log    ${ApellidoMaternoCopiar}
     Click Element    //input[contains(@name,'APE_Materno')]
     Press Keys    none    CTRL+V
     ${RutCopiar}    Read Cell Data By Name    ${NombreHoja}    A${Contador}
     clipboard.Copy    ${RutCopiar}
-    ${RutCopiar1}    Set Variable    ${RutCopiar}
-    Log    ${RutCopiar1}
+    ${RutCopiar}    Set Suite Variable    ${RutCopiar}
+    Log    ${RutCopiar}
     Sleep    10s
     Press Keys    \    ENTER
     Sleep    10s
     Wait Until Element Is Visible    //th[contains(@id,'Tit1')]
     Sleep    10s
-    Log    ${RutCopiar1}
+    Log    ${RutCopiar}
 
 ConsultaDeCasos
 
@@ -307,23 +307,28 @@ ObtenerFechaExccel
 
 ValidarRutExcelHaciaPjud
     [Documentation]    validar Rut de Excel en pjud
-    ${RutCopiar}    Read Cell Data By Name    ${NombreHoja}    A${Contador}
-    Sleep    2s
+    log    ${Contador}
+    log    ${NombreCopiar}
     log    ${RutCopiar}
+    log    ${ApellidoMaternoCopiar}
+    log    ${ApellidoPaternoCopiar}
+    Sleep    2s
     Sleep    5s
-    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
-    Sleep    5s
-    Log    ${Span}
-    Sleep    5s
-    Sleep    5s
-    ${MyText}=    Get Text    ${Span[0]}
-    Sleep    5s
-    Log    ${MyText}
-    Log    ${MyText}
-    Convert To String    ${MyText}
-    Convert To String    ${RutCopiar1}
-    Run Keyword If    "${MyText}"=="${RutCopiar}"    log    "Somos iguales"
-    ...    ELSE    log    "Somos Distintos"
+    @{elem}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    FOR    ${item}    IN    @{elem}
+    \    Log To Console    Item:     ${item.text}
+    #log    ${Span}
+    #Run Keyword If    ${Span}==\    "Vacio"
+    ...    # ELSE    "Hay Algo"
+    #Convert To String    ${Span}
+    Run Keyword If    ${Span}!=[]    log    "No son corchetes"
+    ...    ELSE    log    "Hay Corchetes"
+    #${MyText}=    Get Text    ${Span[0]}
+    #${MyText}=    Remove String    ${Span}    [    ]
+    #log    ${MyText}
+    #Run Keyword If    ${MyText}==[]    log    "Hay Corchetes"
+    #Run Keyword If    ${Span}==${EMPTY}    log    "No hay Registro"
+    #ELSE    log    "Hay Algo"
 
 CopiarRut
     ${RutCopiar1}    Read Cell Data By Name    ${NombreHoja}    A${Contador}
