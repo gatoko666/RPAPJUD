@@ -95,7 +95,7 @@ PruebaDeValidacionDeRutPjud
     ${RutCopiar1}=    Set Variable    15771613-1
     log    ${RutCopiar1}
     Sleep    5s
-    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'15771613-12')]
+    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'15771613-1')]
     Sleep    5s
     Log    ${Span}=
     Sleep    5s
