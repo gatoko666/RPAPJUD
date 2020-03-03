@@ -92,15 +92,15 @@ PruebaDeValidacionDeRutPjud
     Sleep    21s
     Click Element    (//td[contains(.,'Litigantes')])[1]
     Sleep    2s
-    ${RutCopiar1}=    Set Variable    15771613-1222
+    ${RutCopiar1}=    Set Variable    15771613-1
     log    ${RutCopiar1}
     Sleep    5s
-    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'15771613-1')]
+    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'15771613-12')]
     Sleep    5s
     Log    ${Span}=
     Sleep    5s
     Sleep    5s
-    ${MyText}=    Get Text    ${Span[0]}
+    Run Keyword And Ignore Error    ${MyText}=    Get Text    ${Span[0]}
     Sleep    5s
     Log    ${MyText}
     Sleep    5s
@@ -313,22 +313,19 @@ ValidarRutExcelHaciaPjud
     log    ${ApellidoMaternoCopiar}
     log    ${ApellidoPaternoCopiar}
     Sleep    2s
-    Sleep    5s
-    @{elem}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
-    FOR    ${item}    IN    @{elem}
-    \    Log To Console    Item:     ${item.text}
-    #log    ${Span}
-    #Run Keyword If    ${Span}==\    "Vacio"
-    ...    # ELSE    "Hay Algo"
-    #Convert To String    ${Span}
-    Run Keyword If    ${Span}!=[]    log    "No son corchetes"
-    ...    ELSE    log    "Hay Corchetes"
+    #Should Contain Any    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    Sleep    5s    #${elList} =    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]    #${rowList} =    evaluate    [item.get_attribute('innerHTML')    for    item    in    ${elList}]    #@{elem}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]    #FOR    ${item}
+    ...    # IN    @{elem}    #    Log To Console    Item:    # ${item.text}    #log    # ${Span}    #Run Keyword If    # ${Span}==\    "Vacio"    # ELSE    "Hay Algo"    #Convert To String    ${Span}    #Run Keyword If
+    ...    # ${Span}!=[]    log    "No son corchetes"    # ELSE    log    # "Hay Corchetes"
     #${MyText}=    Get Text    ${Span[0]}
     #${MyText}=    Remove String    ${Span}    [    ]
     #log    ${MyText}
     #Run Keyword If    ${MyText}==[]    log    "Hay Corchetes"
     #Run Keyword If    ${Span}==${EMPTY}    log    "No hay Registro"
     #ELSE    log    "Hay Algo"
+    #for    item    in    ${elList}]
+    Run Keyword And Expect Error    ${MyText}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    log    ${MyText}
 
 CopiarRut
     ${RutCopiar1}    Read Cell Data By Name    ${NombreHoja}    A${Contador}
