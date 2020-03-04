@@ -29,6 +29,7 @@ ${MensajePositivo}    Soy un valor verdadero
 ${MensajeNegativo}    No somos iguales
 ${RutCopiar1}     ${EMPTY}
 ${ContadorRutDentroCaso}    14
+${SiTienenCaso}    ${EMPTY}
 
 *** Test Cases ***
 Test1
@@ -74,7 +75,7 @@ ProbarTeclaReturn
     Close Window
 
 TestExcel
-    GuardadoEnExcel
+    GuardadoEnExcelSi
 
 PruebaDeValidacionDeRutPjud
     [Documentation]    Pendiente
@@ -100,9 +101,9 @@ PruebaDeValidacionDeRutPjud
     log    ${RutCopiar1}
     ${test}=    Get Element Count    //td[@class='texto'][contains(.,'115771613-1')]
     log    ${test}
-    Run Keyword If    ${test}>0    log    "Hay un rut valido"
+    Run Keyword If    ${test}>0    GuardadoEnExcelSi    ${EMPTY}
     ...    ELSE    log    "No hay rut valido aca"
-        Close Browser
+    #Close Browser
 
 PruebaDeValidacionDeRutPjud1
     [Documentation]    Pendiente
@@ -230,7 +231,7 @@ ContadorCasosInternosReset
     ${temp2}    Evaluate    1
     Set Test Variable    ${ContadorCasos2}    ${temp2}
 
-GuardadoEnExcel
+GuardadoEnExcelSi
     [Documentation]    Guarda las consultas realizadas
     ...    En un archivo tipo xls 97-2003 con la hora y fecha, con
     ...    que se realizó la prueba.
@@ -239,15 +240,18 @@ GuardadoEnExcel
     ${NombreCopiar}
     ${ApellidoPaternoCopiar}
     ${ApellidoMaternoCopiar}
-    ${EstadoPersona}
-    Put String To Cell    resultado    0    5    Ahora Guarda
-    Put String To Cell    resultado    0    6    Ahora Guarda
-    Put String To Cell    resultado    0    7    Ahora Guarda
+    Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
+    Put String To Cell    resultado    1    ${Contador}    ${NombreCopiar}
+    Put String To Cell    resultado    2    ${Contador}    ${ApellidoPaternoCopiar}
+    Put String To Cell    resultado    3    ${Contador}    ${ApellidoMaternoCopiar}
+    ${SiTienenCaso}    Get WebElements    (//td[contains(@height,'11')])[1]
+    ${NumeroCaso}=    Get Text    ${SiTienenCaso[0]}
+    Put String To Cell    resultado    4    ${Contador}    ${NumeroCaso}
     ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
     ${filename} =    Set Variable    resultado-${timestamp}.xls
     Save Excel    resultado/${filename}
-    Create Excel Workbook    soyTest
-    Save Excel    soyTest.xls
+    #Create Excel Workbook    soyTest
+    #Save Excel    soyTest.xls
 
 ValidarCasosTotal
     [Documentation]    Validar el total de causas y extraer el total como numero.
@@ -332,3 +336,22 @@ CopiarRut
 ContadorDeCadaRut
     ${temp3}    Evaluate    ${ContadorRutDentroCaso}+4
     Set Test Variable    ${ContadorRutDentroCaso}    ${temp3}
+
+GuardadoEnExcelNo
+    [Documentation]    Guarda las consultas realizadas
+    ...    En un archivo tipo xls 97-2003 con la hora y fecha, con
+    ...    que se realizó la prueba.
+    Open Excel    resultado/Prototipo.xls
+    ${RutCopiar}
+    ${NombreCopiar}
+    ${ApellidoPaternoCopiar}
+    ${ApellidoMaternoCopiar}
+    Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
+    Put String To Cell    resultado    1    ${Contador}    ${NombreCopiar}
+    Put String To Cell    resultado    2    ${Contador}    ${ApellidoPaternoCopiar}
+    Put String To Cell    resultado    3    ${Contador}    ${ApellidoMaternoCopiar}
+    ${NumeroCaso}=    log    "No Existe registro"}
+    Put String To Cell    resultado    4    ${Contador}    ${NumeroCaso}
+    ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
+    ${filename} =    Set Variable    resultado-${timestamp}.xls
+    Save Excel    resultado/${filename}
