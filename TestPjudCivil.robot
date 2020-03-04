@@ -236,10 +236,11 @@ GuardadoEnExcelSi
     ...    En un archivo tipo xls 97-2003 con la hora y fecha, con
     ...    que se realizó la prueba.
     Open Excel    resultado/Prototipo.xls
-    ${RutCopiar}
-    ${NombreCopiar}
-    ${ApellidoPaternoCopiar}
-    ${ApellidoMaternoCopiar}
+    Sleep    5s
+    log    ${RutCopiar}
+    log    ${NombreCopiar}
+    log    ${ApellidoPaternoCopiar}
+    log    ${ApellidoMaternoCopiar}
     Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
     Put String To Cell    resultado    1    ${Contador}    ${NombreCopiar}
     Put String To Cell    resultado    2    ${Contador}    ${ApellidoPaternoCopiar}
@@ -324,8 +325,9 @@ ValidarRutExcelHaciaPjud
     log    ${RutCopiar}
     ${test}=    Get Element Count    //td[@class='texto'][contains(.,'${RutCopiar}')]
     log    ${test}
-    Run Keyword If    ${test}>0    log    "Hay un rut valido"
-    ...    ELSE    log    "No hay rut valido aca"
+    Sleep    5s
+    Run Keyword If    ${test}>0    GuardadoEnExcelSi
+    ...    ELSE    GuardadoEnExcelNo
     #    Close Browser
 
 CopiarRut
