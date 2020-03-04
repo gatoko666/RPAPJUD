@@ -28,6 +28,7 @@ ${EstadoPersona}    ${EMPTY}
 ${MensajePositivo}    Soy un valor verdadero
 ${MensajeNegativo}    No somos iguales
 ${RutCopiar1}     ${EMPTY}
+${ContadorRutDentroCaso}    14
 
 *** Test Cases ***
 Test1
@@ -77,45 +78,31 @@ TestExcel
 
 PruebaDeValidacionDeRutPjud
     [Documentation]    Pendiente
-    Open Browser    https://civil.pjud.cl/CIVILPORWEB    chrome
-    Wait Until Element Is Visible    name=body
-    Select Frame    name=body
-    Click Element    //td[contains(@id,'tdCuatro')]
+    SeleniumLibrary.Open Browser    https://civil.pjud.cl/CIVILPORWEB    chrome
+    Sleep    9s
+    SeleniumLibrary.wait Until Element Is Visible    name=body
+    SeleniumLibrary.Select Frame    name=body
+    SeleniumLibrary.Click Element    //td[contains(@id,'tdCuatro')]
     clipboard.Copy    Chacón
-    Input Text    //input[contains(@name,'NOM_Consulta')]    diego
-    Input Text    //input[contains(@name,'APE_Paterno')]    medel
-    Click Element    //input[contains(@name,'APE_Materno')]
-    Press Keys    none    CTRL+V
-    Press Keys    \    ENTER
-    Sleep    5s
-    Click Element    (//td[contains(@class,'textoC')])[1]
+    SeleniumLibrary.Input Text    //input[contains(@name,'NOM_Consulta')]    diego
+    SeleniumLibrary.Input Text    //input[contains(@name,'APE_Paterno')]    medel
+    SeleniumLibrary.Click Element    //input[contains(@name,'APE_Materno')]
+    SeleniumLibrary.Press Keys    none    CTRL+V
+    SeleniumLibrary.Press Keys    \    ENTER
+    Sleep    9s
+    SeleniumLibrary.Click Element    (//td[contains(@class,'textoC')])[1]
     Sleep    21s
-    Click Element    (//td[contains(.,'Litigantes')])[1]
+    SeleniumLibrary.Click Element    (//td[contains(.,'Litigantes')])[1]
     Sleep    2s
     ${RutCopiar1}=    Set Variable    15771613-1
+    ${Span}=    SeleniumLibrary.Get WebElements    //td[@class='texto'][contains(.,'15771613-1')]
+    Log    ${Span}
     log    ${RutCopiar1}
-    Sleep    5s
-    ${Span}=    Get WebElements    //td[@class='texto'][contains(.,'15771613-1')]
-    Sleep    5s
-    Log    ${Span}=
-    Sleep    5s
-    Sleep    5s
-    Run Keyword And Ignore Error    ${MyText}=    Get Text    ${Span[0]}
-    Sleep    5s
-    Log    ${MyText}
-    Sleep    5s
-    ${MyTex2t}=    Remove String Using Regexp    ${MyText}    /^[a-zA-Z\s]*$/;
-    Log    ${MyTex2t}
-    ${string}=    String.Fetch From Left    ${MyText}    )
-    ${string}=    String.Replace String    ${string}    ${Space}    ${EMPTY}
-    Log    ${string}
-    ${MyText}=    Remove String    ${string}    Causas    [    ]    :    Cantidad
-    Log    ${MyText}
-    Convert To String    ${MyText}
-    Convert To String    ${RutCopiar1}
-    Run Keyword If    "${MyText}"=="${RutCopiar1}"    log    "Somos iguales"
-    ...    ELSE    log    "Somos Distintos"
-    Close Browser
+    ${test}=    Get Element Count    //td[@class='texto'][contains(.,'115771613-1')]
+    log    ${test}
+    Run Keyword If    ${test}>0    log    "Hay un rut valido"
+    ...    ELSE    log    "No hay rut valido aca"
+        Close Browser
 
 PruebaDeValidacionDeRutPjud1
     [Documentation]    Pendiente
@@ -324,10 +311,24 @@ ValidarRutExcelHaciaPjud
     #Run Keyword If    ${Span}==${EMPTY}    log    "No hay Registro"
     #ELSE    log    "Hay Algo"
     #for    item    in    ${elList}]
-    Run Keyword And Expect Error    ${MyText}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
-    log    ${MyText}
+    #Run Keyword And Expect Error    ${MyText}=    Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    #log    ${MyText}
+    Sleep    2s
+    #${RutCopiar1}=    Set Variable    15771613-1
+    ${Span}=    SeleniumLibrary.Get WebElements    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    Log    ${Span}
+    log    ${RutCopiar}
+    ${test}=    Get Element Count    //td[@class='texto'][contains(.,'${RutCopiar}')]
+    log    ${test}
+    Run Keyword If    ${test}>0    log    "Hay un rut valido"
+    ...    ELSE    log    "No hay rut valido aca"
+    #    Close Browser
 
 CopiarRut
     ${RutCopiar1}    Read Cell Data By Name    ${NombreHoja}    A${Contador}
     log    ${RutCopiar1}
     Set Test Variable    ${RutCopiar}    ${RutCopiar1}
+
+ContadorDeCadaRut
+    ${temp3}    Evaluate    ${ContadorRutDentroCaso}+4
+    Set Test Variable    ${ContadorRutDentroCaso}    ${temp3}
